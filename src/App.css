@@ -1,38 +1,1252 @@
-.App {
-  text-align: center;
+/* ===============================
+   DESIGN TOKENS
+================================ */
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #f8fafc;
+  --glass-border: rgba(255,255,255,0.12);
+
+  /* Default Accent (overridden per category) */
+  --accent: #22d3ee;
+  --accent-dark: #0891b2;
+  --danger: #f43f5e;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ===============================
+   GLOBAL BASE
+================================ */
+* {
+  box-sizing: border-box;
 }
 
-.App-header {
-  background-color: #282c34;
+/* Elimination styling in the Series Banner */
+.series-score.is-eliminated {
+  text-decoration: line-through;
+  opacity: 0.4;
+  color: #64748b;
+  text-shadow: none;
+}
+
+/* Category Skip Button */
+.cat-skip-btn {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.cat-skip-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cat-skip-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* Countdown Overlay */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+
+.countdown-text {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--accent);
+  animation: countPop 1s infinite;
+}
+
+@keyframes countPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Winner Spotlight in Dashboard */
+.winner-spotlight {
+  background: rgba(34, 211, 238, 0.1);
+  border: 2px solid var(--accent);
+  padding: 15px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  animation: modalIn 0.5s var(--ease-out);
+}
+
+.winner-spotlight h2 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+
+body {
   min-height: 100vh;
+  height: auto;
+  background: radial-gradient(circle at top right, #1e293b, #020617);
+  background-attachment: fixed;
+  background-size: cover;
+  overflow-y: auto; /* Allow scrolling for many players */
+  margin: 0;
+}
+
+.category-section, .timer-display, .in-game-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .game-top-bar { padding: 0 15px; }
+  .grid { gap: 8px; }
+  .letter-btn { height: 50px; font-size: 1.2rem; }
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Stack buttons vertically in the modal for better usability */
+.end-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.primary-btn, .secondary-btn {
+  width: 100%;
+  margin-top: 0 !important; /* Resetting margins for the stack */
+}
+
+/* Series Banner Spacing */
+.series-banner {
+  margin-top: -20px; /* Move it closer to the top bar */
+  margin-bottom: 20px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ===============================
+   SETUP SCREEN
+================================ */
+.setup {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 20px;
+}
+
+.heatmap-container {
+  margin-top: 20px;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Layout Fixes */
+.setup { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+.names-scroll { max-height: 40vh; overflow-y: auto; padding-right: 8px; margin: 1.5rem 0; width: 100%; }
+.names-scroll::-webkit-scrollbar { width: 6px; }
+.names-scroll::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+/* Heatmap UI */
+.heatmap-container { margin-top: 20px; text-align: center; width: 100%; }
+.heatmap-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px; }
+.heat-box { aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); transition: background-color 0.3s ease; }
+.heat-time { font-size: 0.5rem; opacity: 0.7; }
+.heat-box.unplayed { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+
+.post-game-analytics {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.stat-row {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+
+.heat-box {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.heat-time {
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
+
+.heat-box.unplayed {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.series-leaderboard {
+  margin-top: 1rem;
+  text-align: left;
+  border-top: 1px solid #ccc;
+  padding-top: 0.5rem;
+}
+.leader-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+}
+.overall-winner {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+
+.logo {
+  font-size: 4rem;
+  letter-spacing: 8px;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 30px color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+/* ===============================
+   CARDS / PANELS
+================================ */
+.card {
+  width: 100%;
+  max-width: 460px;
+  padding: 2.5rem;
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg,
+      rgba(30,41,59,0.96),
+      rgba(15,23,42,0.96)
+    );
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,0.65),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+/* ===============================
+   PLAYER COUNT
+================================ */
+.count-grid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.count-opt,
+.custom-count-input {
+  padding: 16px 26px;
+  border-radius: 14px;
+  background: #020617;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 800;
+  border: 1px solid var(--glass-border);
+  transition: all 0.18s var(--ease-out);
+  position: relative;
+}
+
+/* HAPTIC PRESS */
+.count-opt:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+/* ===============================
+   GAME LAYOUT
+================================ */
+.app {
+  min-height: 100vh;
+  padding: 40px 20px; /* Increased vertical spacing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px; /* More breathing room between sections */
+  max-width: 1200px;
+  margin: 0rem auto 3rem auto;
+}
+/* ===============================
+   CATEGORY PILL + THEMING
+================================ */
+.cat-pill {
+  padding: 14px 46px;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, var(--accent), var(--accent-dark));
+  box-shadow:
+    0 2px 2px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+.cat-pill .label {
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  opacity: 0.8;
+}
+
+.cat-pill .text {
+  font-size: 1.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ===============================
+   TIMER (EMOTIONAL CORE)
+================================ */
+.timer-display {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6));
+}
+
+.timer-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-bg {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 8;
+}
+
+.timer-bar {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+}
+
+.time-val {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 3.5rem; /* Slightly smaller to fit "SKIPPING" */
+  font-weight: 900;
+  line-height: 1;
+}
+/* PANIC STATE */
+.timer-display.panic .timer-bar {
+  stroke: var(--danger);
+  animation: panicPulse 0.75s infinite alternate;
+}
+
+@keyframes panicPulse {
+  from { filter: drop-shadow(0 0 6px rgba(244,63,94,0.4)); }
+  to   { filter: drop-shadow(0 0 16px rgba(244,63,94,1)); }
+}
+
+/* ===============================
+   LETTER GRID
+================================ */
+.grid {
+  width: 100%;
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.letter-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.letter-btn {
+  height: 56px;
+  border-radius: 14px;
+  background: var(--panel);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 800;
+  border: 1px solid var(--glass-border);
+  transition: transform 0.14s var(--ease-out),
+              box-shadow 0.14s var(--ease-out),
+              background 0.2s;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 6px 14px rgba(0,0,0,0.45);
+}
+
+/* HAPTIC PRESS FEEL */
+.letter-btn:active:not(.used) {
+  transform: scale(0.92);
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
+  background: color-mix(in oklab, var(--accent) 15%, var(--panel));
+}
+
+/* USED LETTER */
+.letter-btn.used {
+  background: #020617;
+  color: #334155;
+  opacity: 0.5;
+  box-shadow: none;
+  text-decoration: line-through;
+}
+
+/* ===============================
+   RANDOM MODE HIGHLIGHT
+================================ */
+.letter-btn.highlight {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 2px color-mix(in oklab, var(--accent) 35%, transparent),
+    0 10px 26px rgba(0,0,0,0.6);
+}
+
+/* ===============================
+   MODALS
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.75);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.out-card {
+  background:
+    linear-gradient(180deg,
+      rgba(30,41,59,0.98),
+      rgba(15,23,42,0.98)
+    );
+  padding: 2.5rem;
+  border-radius: 28px;
+  border: 1px solid var(--glass-border);
+  animation: modalIn 0.35s var(--ease-out);
+}
+
+.mode-toggle {
+  display: inline-flex;
+  background: #020617;
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+  margin-bottom: 1.5rem;
+}
+
+.mode-toggle button {
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  background: transparent;
+  color: #94a3b8;
+  transition: all 0.2s var(--ease-out);
+}
+
+.name-list-container {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.name-list-container h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.names-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 40vh; /* Limits height of player list */
+  overflow-y: auto; /* Adds internal scrollbar for names */
+  padding-right: 8px;
+  margin-bottom: 10px;
+}
+
+.names-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.names-scroll::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}
+
+.name-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s var(--ease-out), filter 0.2s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.logo:active {
+  transform: scale(0.95);
+}
+
+.name-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #020617;
+  border: 1px solid var(--glass-border);
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.name-input-wrapper input {
+  flex: 1;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #020617;
+  border: 1px solid var(--glass-border);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.2s var(--ease-out);
+}
+
+.name-input-wrapper input::placeholder {
+  color: #64748b;
+}
+
+/* ===============================
+   BUTTON & INPUT ENHANCEMENTS
+================================ */
+
+/* Global Button Hover/Active States */
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shine effect on hover for primary buttons */
+.start-btn, .primary-btn, .count-opt, .control-btn {
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.start-btn:hover, .primary-btn:hover, .count-opt:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 0 15px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.start-btn:active, .primary-btn:active, .count-opt:active {
+  transform: translateY(0) scale(0.96);
+  filter: brightness(0.9);
+}
+
+/* FIXING THE INPUT FOCUS (Your Image Issue) */
+.name-input-wrapper input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 2px solid transparent; /* Set a transparent border base */
+  color: white;
+  font-size: 1rem;
+  transition: all 0.25s var(--ease-out);
+  outline: none; /* Remove default browser outline */
+}
+
+.name-input-wrapper input:focus {
+  background: #020617;
+  border-color: var(--accent); /* Clean solid border */
+  /* This creates a soft glow instead of a harsh double-line */
+  box-shadow: 
+    0 0 0 3px color-mix(in oklab, var(--accent) 15%, transparent)
+}
+
+/* Enhancing the Player Number circles */
+.name-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px; /* Slightly squircle */
+  background: var(--panel);
+  border: 1px solid var(--glass-border);
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Control Buttons (Pause/Skip) */
+.control-btn {
+  background: var(--panel);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.control-btn:hover {
+  background: color-mix(in oklab, var(--panel) 80%, white);
+}
+
+/* Start Button Specifics */
+.start-btn {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #020617;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+
+.mode-toggle button.active {
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    var(--accent-dark)
+  );
+  color: #020617;
+  box-shadow:
+    0 2px 2px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+.mode-toggle button:not(.active):hover {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
+@keyframes modalIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: none;
   }
 }
+
+/* ===============================
+   CATEGORY COLOR THEMING
+   (Add class to body or app)
+================================ */
+
+/* Example:
+   <div class="app theme-food">
+*//* ===============================
+   DESIGN TOKENS
+================================ */
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --text: #f8fafc;
+  --glass-border: rgba(255,255,255,0.12);
+  --accent: #22d3ee;
+  --accent-dark: #0891b2;
+  --danger: #f43f5e;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: radial-gradient(circle at top right, #1e293b, #020617);
+  color: var(--text);
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  height: 100vh;
+}
+
+/* ===============================
+   GLOBAL BUTTONS & INPUTS
+================================ */
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s var(--ease-out);
+  position: relative;
+}
+
+.name-input-wrapper input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.6);
+  border: 2px solid transparent; 
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.25s var(--ease-out);
+}
+
+.name-input-wrapper input:focus {
+  background: #020617;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 15%, transparent);
+}
+
+/* ===============================
+   SETUP SCREEN
+================================ */
+.setup {
+  height: auto; /* Changed from 100vh to allow scrolling if list is long */
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  font-size: 4rem;
+  letter-spacing: 8px;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 30px color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+.card {
+  width: 100%;
+  max-width: 460px;
+  padding: 2.5rem;
+  border-radius: 32px;
+  background: linear-gradient(180deg, rgba(30,41,59,0.96), rgba(15,23,42,0.96));
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+/* ===============================
+   GAME TOP BAR & HERO
+================================ */
+.app {
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.game-top-bar {
+  width: 100%;
+  max-width: 100%; /* Full horizontal width */
+  padding: 0 40px; /* Distance from the screen edges */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bar-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--glass-border);
+  color: #94a3b8;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.active-player-hero {
+  text-align: center;
+  flex: 1;
+}
+
+.player-name-big {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 20px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.skip-status { font-size: 0.7rem; font-weight: 700; opacity: 0.6; margin-top: 4px; }
+
+/* ===============================
+   TIMER & GAMEPLAY
+================================ */
+.timer-display { position: relative; width: 180px; height: 180px; filter: drop-shadow(0 12px 30px rgba(0,0,0,0.6)); }
+.timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.timer-bg { fill: none; stroke: #334155; stroke-width: 8; }
+.timer-bar { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 283; transition: stroke-dashoffset 1s linear; }
+
+.time-val {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+  font-weight: 900;
+}
+
+.status-msg { font-size: 1.1rem; letter-spacing: 1px; color: var(--accent); animation: blink 0.8s infinite alternate; }
+@keyframes blink { from { opacity: 0.4; } to { opacity: 1; } }
+
+.in-game-controls { display: flex; gap: 20px; }
+.control-btn {
+  background: var(--panel);
+  border: 1px solid var(--glass-border);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 14px;
+  font-weight: 800;
+  min-width: 110px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.control-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+/* ===============================
+   PRIMARY BUTTONS (UPGRADED)
+================================ */
+.start-btn, .primary-btn {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #020617;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  box-shadow: 0 10px 25px -5px color-mix(in oklab, var(--accent) 40%, transparent);
+}
+
+.start-btn:hover, .primary-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+.start-btn:active, .primary-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ===============================
+   LETTER GRID
+================================ */
+.grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  max-width: 900px;
+  gap: 15px;
+}
+
+.letter-btn {
+  height: 55px;
+  border-radius: 14px;
+  background: var(--panel);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 800;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+}
+
+.letter-btn.used { background: #020617; color: #334155; opacity: 0.5; text-decoration: line-through; box-shadow: none; }
+
+/* ===============================
+   MODALS & MISC
+================================ */
+.modal-overlay { position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(10px); display: grid; place-items: center; z-index: 100; }
+.out-card { width: 90%; max-width: 400px; text-align: center; }
+.end-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.secondary-btn { background: transparent; color: #94a3b8; border: 1px solid var(--glass-border); padding: 14px; border-radius: 14px; font-weight: 700; }
+
+.cat-pill { padding: 12px 36px; border-radius: 999px; background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
+.cat-pill .text { font-size: 1.6rem; font-weight: 900; }
+
+.name-num { width: 32px; height: 32px; border-radius: 10px; background: var(--panel); border: 1px solid var(--glass-border); display: grid; place-items: center; font-size: 0.8rem; font-weight: 800; color: var(--accent); }
+.count-grid { display: flex; gap: 10px; justify-content: center; margin-top: 1rem; }
+.count-opt { padding: 16px 24px; border-radius: 14px; background: #020617; color: white; font-weight: 800; border: 1px solid var(--glass-border); }
+
+/* Theme Overrides */
+.theme-food { --accent: #f97316; --accent-dark: #ea580c; }
+
+.theme-food {
+  --accent: #f97316;
+  --accent-dark: #ea580c;
+}
+
+.theme-animals {
+  --accent: #22c55e;
+  --accent-dark: #16a34a;
+}
+
+.theme-movies {
+  --accent: #a855f7;
+  --accent-dark: #7e22ce;
+}
+
+.theme-geography {
+  --accent: #38bdf8;
+  --accent-dark: #0284c7;
+}
+
+.theme-sports {
+  --accent: #facc15;
+  --accent-dark: #eab308;
+}
+
+.player-name-big {
+  animation: nameGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes nameGlow {
+  from { text-shadow: 0 0 10px color-mix(in oklab, var(--accent) 20%, transparent); }
+  to { text-shadow: 0 0 25px color-mix(in oklab, var(--accent) 60%, transparent); transform: scale(1.05); }
+}
+
+.letter-btn:active:not(.used) {
+  background: #22c55e !important; /* Success Green */
+  border-color: #4ade80;
+  transform: scale(0.9);
+  transition: 0.1s;
+}
+
+.modal-overlay {
+  backdrop-filter: blur(12px) saturate(180%);
+  background: rgba(15, 23, 42, 0.6); /* Translucent dark blue */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.start-btn, .primary-btn {
+  position: relative;
+
+}
+
+.start-btn::after, .primary-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+
+.start-btn:hover::after, .primary-btn:hover::after {
+  left: 100%;
+}
+
+.letter-btn {
+  animation: popIn 0.3s var(--ease-out) backwards;
+}
+
+/* Staggered delay for each letter button */
+.letter-btn:nth-child(n) { animation-delay: calc(0.02s * n); }
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.timer-display.panic::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+  animation: panicFlash 0.5s infinite alternate;
+}
+
+@keyframes panicFlash {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Styled Big Done Button */
+.big-done-btn {
+  /* Restored large green button style from previous requests */
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  box-shadow: 0 2px 5px rgba(22, 163, 74, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.big-done-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.1);
+}
+
+.big-done-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.big-done-btn:disabled {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+/* UX: Success flash for the Done Button */
+.big-done-btn.success-flash {
+  animation: successPulse 0.4s ease-out;
+}
+
+@keyframes successPulse {
+  0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.7); }
+  100% { box-shadow: 0 0 0 30px rgba(34, 197, 94, 0); }
+}
+
+/* Auto-mode Letter Indicator */
+.next-letter-pill {
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--glass-border);
+}
+
+.next-letter-pill .label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  opacity: 0.7;
+}
+
+.next-letter-pill .val {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+/* Mobile Adjustment */
+@media (max-width: 600px) {
+  .app { gap: 20px; padding: 20px; }
+  .grid { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+}
+
+/* Analytics Dashboard Styles */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+}
+
+.stat-card h4 { margin: 0 0 5px 0; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; }
+.stat-card p { margin: 0; font-size: 1.1rem; font-weight: 800; }
+
+.heatmap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.heat-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  color: #000;
+}
+
+/* Series Scoreboard Bar */
+.series-banner {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid var(--glass-border);
+  padding: 12px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-around;
+  backdrop-filter: blur(5px);
+}
+
+.series-score {
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+}
+
+/* Analytics & Dashboard */
+.stats-dashboard {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.badge-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.badge-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--accent);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  text-align: center;
+}
+
+.stat-card h4 {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.stat-card p {
+  margin: 5px 0 0;
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+/* Restored Countdown Logic */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.9);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  border-radius: 50%;
+  backdrop-filter: blur(8px);
+}
+.countdown-text { font-size: 5rem; font-weight: 900; color: var(--accent); animation: countPop 1s infinite; }
+@keyframes countPop { 0% { transform: scale(0.5); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+/* Layout Fix: Scrollable Player List */
+.names-scroll { max-height: 40vh; overflow-y: auto; padding-right: 8px; margin: 1.5rem 0; width: 100%; }
+.names-scroll::-webkit-scrollbar { width: 6px; }
+.names-scroll::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+/* Letter Heatmap */
+.heatmap-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px; }
+.heat-box { aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.1); }
+.heat-time { font-size: 0.5rem; opacity: 0.7; }
+.heat-box.unplayed { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.2); }
+
+/* Series Scoreboard */
+.series-banner {
+  background: rgba(34, 211, 238, 0.1);
+  border: 1px solid var(--accent);
+  padding: 10px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.series-score { font-weight: 900; color: var(--accent); }
