@@ -20,7 +20,7 @@ export let categories = [
 
   // Entertainment
   "Movies", "Documentaries",
-  "TV Shows", "Board & Card Games", "Video Games", "Toys", "Video Game Characters", "Movie Studios", "Streaming Platforms",
+  "TV Shows", "Board & Card Games", "Video Games", "Toys", "Video Game Characters", "Streaming Platforms",
   
   // Music
   "Musical Instruments", "Musical Genres",
@@ -30,7 +30,7 @@ export let categories = [
   "Sports", "Olympic Sports", "Winter Activities", "Summer Activities", "Gym Workouts", "Hobbies", "Sports Teams", "Sports Players",
   
   // Fashion & Brands
-  "Clothing Items", "Footwear", "Luxury Brands", "Budget Brands", "Accessories", "Perfume Brands",
+  "Clothing Items", "Footwear", "Luxury Brands", "Accessories", "Perfume Brands",
   
   // Technology
   "Tech Companies", "Apps on your Phone", "Social Media Platforms", "Websites",
@@ -57,7 +57,7 @@ export let categories = [
   "Trending Topics", "Tech Gadgets",
   "Cars", "Sports Equipment", "Professions that will disappoint your parents", "Professions", "Inappropriate gifts for your grandmother", "Crimes you’d be arrested for", "Dumb ways to get hurt",
   "Things you shouldn’t bring into the bathtub", "Things that will get you fired",
-  
+
   // Odd / Misc Objects
   "Found in a Library", "Found in a Museum", "Found in a Park", "Airport Items",
   "Cleaning Products"

@@ -100,16 +100,6 @@ html, body {
   font-size: 1.5rem;
 }
 
-body {
-  min-height: 100vh;
-  height: auto;
-  background: radial-gradient(circle at top right, #1e293b, #020617);
-  background-attachment: fixed;
-  background-size: cover;
-  overflow-y: auto; /* Allow scrolling for many players */
-  margin: 0;
-}
-
 .category-section, .timer-display, .in-game-controls {
   width: 100%;
   display: flex;
@@ -337,6 +327,76 @@ button:focus-visible {
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 2px;
+}
+
+.rules-card {
+  max-width: 900px !important; 
+  padding: 0.8rem 2rem !important;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-x {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.rules-list {
+  padding-left: 1.2rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.shortcut-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+kbd {
+  background: #eee;
+  border-radius: 5px;
+  border: 1px solid #b4b4b4;
+  box-shadow: 0 2px 0 #b4b4b4;
+  color: #333;
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 2px 6px;
+  white-space: nowrap;
+  margin: 5px 0
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 1.5rem 0;
+}
+
+.pulse-hover:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
 }
 
 /* ===============================
@@ -605,8 +665,8 @@ button {
   transform: translateY(-2px);
   filter: brightness(1.1);
   box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.3),
-    0 0 15px color-mix(in oklab, var(--accent) 30%, transparent);
+    0 2px 5px -3px rgba(0, 0, 0, 0.3),
+    0 0 5px color-mix(in oklab, var(--accent) 30%, transparent);
 }
 
 .start-btn:active, .primary-btn:active, .count-opt:active {
@@ -655,7 +715,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--glass-border);
   color: white;
-  padding: 10px 20px;
+  padding: 7px 20px;
   border-radius: 12px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -730,12 +790,16 @@ button {
 * { box-sizing: border-box; }
 
 body {
+  min-height: 100vh;
+  height: auto;
   background: radial-gradient(circle at top right, #1e293b, #020617);
-  color: var(--text);
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  height: 100vh;
+  background-attachment: fixed;
+  background-size: cover;
+  overflow-y: auto; /* Allow scrolling for many players */
+  margin: 0rem 0 2rem 0;
+  color: white;
 }
+
 
 /* ===============================
    GLOBAL BUTTONS & INPUTS
@@ -804,7 +868,7 @@ button {
 ================================ */
 .app {
   height: 100vh;
-  padding: 20px;
+  padding: 10px !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -833,13 +897,40 @@ button {
 .active-player-hero {
   text-align: center;
   flex: 1;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;  /* Centers them vertically against each other */
+  justify-content: center; /* Keeps them centered in the middle of the screen */
+  gap: 15px; /* Space between name and skip badge */
 }
 
 .player-name-big {
   font-size: 2.2rem;
   font-weight: 900;
   color: var(--accent);
+  margin: 0; /* Remove default h2 margins */
   text-shadow: 0 0 20px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
+.skip-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  white-space: nowrap; /* Prevents the text from wrapping to a second line */
+}
+
+/* Optional: Make the badge glow slightly if skip is available */
+.skip-badge:has(span:contains("✨")) {
+  border-color: var(--accent);
+  color: white;
 }
 
 .skip-status { font-size: 0.7rem; font-weight: 700; opacity: 0.6; margin-top: 4px; }
@@ -869,7 +960,7 @@ button {
   background: var(--panel);
   border: 1px solid var(--glass-border);
   color: white;
-  padding: 12px 24px;
+  padding: 7px 24px;
   border-radius: 14px;
   font-weight: 800;
   min-width: 110px;
@@ -883,7 +974,7 @@ button {
 ================================ */
 .start-btn, .primary-btn {
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1rem;
   padding: 18px;
   border-radius: 18px;
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
@@ -891,7 +982,7 @@ button {
   font-size: 1.1rem;
   font-weight: 900;
   letter-spacing: 2px;
-  box-shadow: 0 10px 25px -5px color-mix(in oklab, var(--accent) 40%, transparent);
+  box-shadow: 0 2px 5px -5px color-mix(in oklab, var(--accent) 40%, transparent);
 }
 
 .start-btn:hover, .primary-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
@@ -1043,7 +1134,7 @@ button {
   /* Restored large green button style from previous requests */
   width: 100%;
   max-width: 400px;
-  padding: 24px;
+  padding: 7px 24px;
   border-radius: 20px;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;

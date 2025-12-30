@@ -51,6 +51,10 @@ export default function App() {
   const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
 
   const startRound = (finalPlayers, newSeries = false) => {
+    // 1. Shuffle the players to randomize the sequence
+    const randomizedPlayers = shuffle(finalPlayers);
+
+    // 2. Use the randomized list for the category and state
     setCategory(CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)]);
     setLetters(mode === "random" ? shuffle(ALPHABET) : ALPHABET);
     setUsedLetters([]);
@@ -58,17 +62,20 @@ export default function App() {
     setAnalytics([]);
     setCatSkipAvailable(true);
 
+    // Use the randomized list to set the players
+    setPlayers(randomizedPlayers);
+
     const skips = {};
-    finalPlayers.forEach(p => skips[p] = 1);
+    randomizedPlayers.forEach(p => skips[p] = 1);
     setSkipsLeft(skips);
 
     if (newSeries) {
       const scores = {};
-      finalPlayers.forEach(p => scores[p] = 0);
+      randomizedPlayers.forEach(p => scores[p] = 0);
       setSeriesScores(scores);
     }
 
-    setCurrentPlayer(0);
+    setCurrentPlayer(0); // This now refers to the first person in the shuffled list
     setTimeLeft(ROUND_TIME);
     setTurnStart(null);
     setPausedAt(null);
@@ -79,7 +86,7 @@ export default function App() {
     setActive(true);
   };
 
-const endRound = useCallback((winner, reason) => {
+  const endRound = useCallback((winner, reason) => {
     setActive(false);
     setGameStarted(false);
     setAllCleared(true);
@@ -88,7 +95,7 @@ const endRound = useCallback((winner, reason) => {
     setSeriesScores(p => ({ ...p, [winner]: (p[winner] || 0) + 1 }));
   }, []);
 
-const moveToNextPlayer = useCallback((nextElim = eliminated) => {
+  const moveToNextPlayer = useCallback((nextElim = eliminated) => {
     let idx = (currentPlayer + 1) % players.length;
     while (nextElim.includes(players[idx])) {
       idx = (idx + 1) % players.length;
@@ -98,7 +105,7 @@ const moveToNextPlayer = useCallback((nextElim = eliminated) => {
     if (gameStarted) setTurnStart(Date.now());
   }, [currentPlayer, eliminated, gameStarted, players]);
 
-const togglePause = useCallback(() => {
+  const togglePause = useCallback(() => {
     if (!active || !gameStarted) return;
     if (!isPaused) {
       setPausedAt(Date.now());
@@ -185,27 +192,48 @@ const togglePause = useCallback(() => {
     return () => clearInterval(timerRef.current);
   }, [active, gameStarted, isPaused, isCounting, turnStart, eliminated, players, handleTimeout]);
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if (showRules || e.target.tagName === "INPUT" || !active) return;
-      const key = e.key.toUpperCase();
+useEffect(() => {
+  const onKey = (e) => {
+    if (showRules || e.target.tagName === "INPUT" || !active) return;
+    const key = e.key.toUpperCase();
 
-      if (e.code === "Space") {
-        e.preventDefault();
-        if (!gameStarted) return;
-        mode === "random" ? handleTurn(currentLetter) : togglePause();
-        return;
+    // 1. Spacebar (Classic - pause / Auto - done)
+    // We keep this here because togglePause handles its own state
+    if (e.code === "Space") {
+      e.preventDefault();
+      if (!gameStarted) return;
+      mode === "random" ? handleTurn(currentLetter) : togglePause();
+      return;
+    }
+
+    // 2. Enter Key (Random - pause / Classic - skip)
+    // MOVED ABOVE the isPaused check so it can unpause!
+    if (e.code === "Enter") {
+      e.preventDefault();
+      if (!gameStarted) return;
+
+      if (mode === "random") {
+        togglePause(); // This will now work to BOTH pause and unpause
+      } else {
+        if (!isPaused) handleSkip(); // Only skip if not paused
       }
+      return;
+    }
 
-      if (!gameStarted || isPaused) return;
-      if (e.code === "Enter" && mode === "choose") handleSkip();
-      if (key === "S" && mode === "random") handleSkip();
-      if (mode === "choose" && ALPHABET.includes(key)) handleTurn(key);
-    };
+    // --- Safety Gate ---
+    // Anything below this requires the game to be unpaused
+    if (!gameStarted || isPaused) return;
 
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [gameStarted, isPaused, active, mode, currentLetter, usedLetters, pausedAt, turnStart, showRules, handleSkip, handleTurn, togglePause]);
+    // 3. Skip (S key)
+    if (key === "S" && mode === "random") handleSkip();
+
+    // 4. Submit alphabet (Classic Mode)
+    if (mode === "choose" && ALPHABET.includes(key)) handleTurn(key);
+  };
+
+  window.addEventListener("keydown", onKey);
+  return () => window.removeEventListener("keydown", onKey);
+}, [gameStarted, isPaused, active, mode, currentLetter, usedLetters, pausedAt, turnStart, showRules, handleSkip, handleTurn, togglePause]);
 
   // ───────────────── COUNTDOWN EFFECT ─────────────────
   useEffect(() => {
@@ -237,8 +265,8 @@ const togglePause = useCallback(() => {
           <div className="card scale-in">
             <h2>Number of Players</h2>
             <div className="count-grid">
-              {[2,3,4].map(n => <button key={n} className="count-opt" onClick={() => { setPlayerCount(n); setAskingCount(false); }}>{n}</button>)}
-              <input className="custom-count-input" type="number" placeholder="Custom" onChange={(e) => { const v = parseInt(e.target.value); if(v > 1) { setPlayerCount(v); setAskingCount(false); }}} />
+              {[2, 3, 4].map(n => <button key={n} className="count-opt" onClick={() => { setPlayerCount(n); setAskingCount(false); }}>{n}</button>)}
+              <input className="custom-count-input" type="number" placeholder="Custom" onChange={(e) => { const v = parseInt(e.target.value); if (v > 1) { setPlayerCount(v); setAskingCount(false); } }} />
             </div>
           </div>
         ) : (
@@ -253,10 +281,6 @@ const togglePause = useCallback(() => {
     <div className="app no-scroll">
       <div className="game-top-bar">
         <button className="bar-btn" onClick={() => window.location.reload()}>Quit</button>
-        <div className="active-player-hero">
-          <div className="player-name-big">{players[currentPlayer]}</div>
-          <div className="skip-status">{skipsLeft[players[currentPlayer]] > 0 ? "✨ Skip Available" : "❌ Skip Used"}</div>
-        </div>
         <button className="bar-btn help" onClick={() => setShowRules(true)}>?</button>
       </div>
 
@@ -268,24 +292,35 @@ const togglePause = useCallback(() => {
         ))}
       </div>
 
-      <div className="category-section" style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-        <div className="cat-pill">
-            <span className="label">CATEGORY</span>
-            <div className="text">{category}</div>
+      <div className="category-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  {/* Updated Hero Section */}
+  <div className="active-player-hero">
+    <div className="hero-row">
+      <h2 className="player-name-big">{players[currentPlayer]}</h2>
+      <span className="skip-badge">
+        {skipsLeft[players[currentPlayer]] > 0 ? "✨ Skip Available" : "❌ Skip Used"}
+      </span>
+    </div>
+  </div>
 
-            {mode === "random" && gameStarted && (
-            <div className="next-letter-pill">
-                <span className="label">YOUR LETTER:</span>
-                <span className="val">{currentLetter}</span>
-            </div>
-        )}
-        </div>
-        {!gameStarted && active && !isCounting && (
-          <button className="cat-skip-btn" onClick={handleCategorySkip} disabled={!catSkipAvailable}>
-            {catSkipAvailable ? "↺ Skip Category" : "No skips left"}
-          </button>
-        )}
+  <div className="cat-pill">
+    <span className="label">CATEGORY</span>
+    <div className="text">{category}</div>
+
+    {mode === "random" && gameStarted && (
+      <div className="next-letter-pill">
+        <span className="label">YOUR LETTER:</span>
+        <span className="val">{currentLetter}</span>
       </div>
+    )}
+  </div>
+
+  {!gameStarted && active && !isCounting && (
+    <button className="cat-skip-btn" onClick={handleCategorySkip} disabled={!catSkipAvailable}>
+      {catSkipAvailable ? "↺ Skip Category" : "No skips left"}
+    </button>
+  )}
+</div>
 
       <div className={`timer-display ${panic ? "panic" : ""}`}>
         {isCounting && <div className="countdown-overlay"><div className="countdown-text">{countdown}</div></div>}
@@ -330,13 +365,15 @@ const togglePause = useCallback(() => {
               </>
             ) : (
               <>
-                <h1 style={{color: 'var(--danger)'}}>ELIMINATED!</h1>
+                <h1 style={{ color: 'var(--danger)' }}>ELIMINATED!</h1>
                 <p>Ran out of time.</p>
               </>
             )}
             <div className="end-actions">
               {!allCleared && <button className="primary-btn" onClick={() => { setActive(true); setGameStarted(false); setTimeLeft(ROUND_TIME); setTurnStart(null); }}>Continue Round</button>}
-              <button className="secondary-btn" onClick={() => startRound(players, false)}>Next Round</button>
+              <button className="secondary-btn" onClick={() => startRound(players, false)}>
+                Next Round
+              </button>
               <button className="secondary-btn" onClick={() => window.location.reload()}>Quit Game</button>
             </div>
           </div>
@@ -353,7 +390,7 @@ function SetupScreen({ count, mode, setMode, onStart }) {
     <div className="card scale-in">
       <div className="mode-toggle">
         <button className={mode === "choose" ? "active" : ""} onClick={() => setMode("choose")}>Classic</button>
-        <button className={mode === "random" ? "active" : ""} onClick={() => setMode("random")}>Auto</button>
+        <button className={mode === "random" ? "active" : ""} onClick={() => setMode("random")}>Random</button>
       </div>
       <div className="names-scroll">
         {names.map((n, i) => (
@@ -391,17 +428,55 @@ function Heatmap({ analytics }) {
 function RulesModal({ onClose, mode }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="out-card card" style={{maxWidth: '500px'}} onClick={e => e.stopPropagation()}>
-        <h2>Shortcuts & Rules</h2>
-        <div style={{textAlign: 'left', marginBottom: '20px'}}>
-          <ul style={{listStyle: 'none', padding: 0}}>
-            <li><kbd>Space</kbd> {mode === "random" ? "Done!" : "Pause / Resume"}</li>
-            <li><kbd>Enter</kbd> {mode === "random" ? "Skip" : "N/A"}</li>
-            <li><kbd>S</kbd> Skip Turn</li>
-            <li><kbd>A-Z</kbd> Submit (Classic)</li>
-          </ul>
+      <div className="rules-card card scale-in" onClick={e => e.stopPropagation()}>
+        <header className="rules-header">
+          <h2>Game Guide</h2>
+          <button className="close-x" onClick={onClose}>&times;</button>
+        </header>
+
+        <div className="rules-grid">
+          {/* Section 1: Objective & Modes */}
+          <div className="rules-box">
+            <h3>🎮 How to Play</h3>
+            <p>Beat the <strong>15s timer</strong> by naming something in the category starting with the {mode === 'random' ? 'assigned' : 'chosen'} letter.</p>
+            <div className="mode-badge"><strong>Auto Mode:</strong> Letter assigned</div>
+            <div className="mode-badge"><strong>Classic Mode:</strong> Choose any letter</div>
+          </div>
+
+          {/* Section 2: Special Moves */}
+          <div className="rules-box">
+            <h3>✨ Power-Ups</h3>
+            <div className="mini-flex">
+              <span><strong>1 Player Skip</strong> per round</span><br />
+              <span><strong>1 Category Swap</strong> (at start)</span>
+            </div>
+          </div>
+
+          {/* Section 3: Shortcuts */}
+          <div className="rules-box full-width">
+            <h3>⌨️ Shortcuts</h3>
+            <h4>Classic Mode</h4>
+            <div className="shortcut-row">
+              <div className="key-item"><kbd>{"A-Z"}</kbd> <span>Submit</span></div>
+              <div className="key-item"><kbd>{"ENTER"}</kbd> <span>Skip</span></div>
+              <div className="key-item"><kbd>{"SPACE"}</kbd> <span>Pause/Resume</span></div>
+            </div>
+            <h4>Random Mode</h4>
+            <div className="shortcut-row">
+              <div className="key-item"><kbd>{"SPACE"}</kbd> <span>Submit</span></div>
+              <div className="key-item"><kbd>{"S"}</kbd> <span>Skip</span></div>
+              <div className="key-item"><kbd>{"Enter"}</kbd> <span>Pause/Resume</span></div>
+            </div>
+          </div>
+
+          {/* Section 4: Winning */}
+          <div className="rules-box highlight">
+            <h3>🏆 Win Condition</h3>
+            <p>Be the <strong>last player standing</strong> or <strong>clear the final letter</strong> of the alphabet!</p>
+          </div>
         </div>
-        <button className="primary-btn" onClick={onClose}>Got it</button>
+
+        <button className="primary-btn finish-btn" onClick={onClose}>Ready to Rush</button>
       </div>
     </div>
   );
