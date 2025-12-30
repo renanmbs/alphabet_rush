@@ -323,6 +323,7 @@ button:focus-visible {
     linear-gradient(135deg, var(--accent), var(--accent-dark));
   box-shadow:
     0 2px 2px color-mix(in oklab, var(--accent) 35%, transparent);
+    text-align: center;
 }
 
 .cat-pill .label {

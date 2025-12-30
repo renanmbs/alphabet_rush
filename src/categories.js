@@ -1,43 +1,64 @@
 export let categories = [
-    "Animals", "Countries", "Capital Cities", "Girl Names", "Boy Names", 
-    "Fruits", "Vegetables", "Colors", "Movies", "TV Shows", 
-    "Superheroes", "Villains", "Brands", "Clothing Items", "Sports",
-    "Musical Instruments", "Holidays", "Pizza Toppings", "Ice Cream Flavors", "Desserts",
-    "Breakfast Foods", "Fast Food Chains", "Soft Drinks", "Video Games", "Board Games",
-    "School Subjects", "Professions", "Body Parts", "Languages", "Flowers",
-    "Insects", "Birds", "Sea Creatures", "Dog Breeds", "Cars",
-    "Space/Planets", "Weather Words", "Tools", "Furniture", "Kitchen Appliances",
-    "Stationery", "Hobby", "Disney Characters", "Cartoon Characters", "Famous Singers",
-    "Actors", "Historical Figures", "Countries in Europe", "Countries in Asia", "US States",
-    "Chemical Elements", "Math Terms", "Types of Fabric", "Jewelry", "Footwear",
-    "Makeup Brands", "Tech Companies", "Apps on your Phone", "Social Media Platforms", "Websites",
-    "Card Games", "Olympic Sports", "Winter Activities", "Summer Activities", "Things at a Beach",
-    "Things in a Forest", "Things in a Hospital", "Things in a Circus", "Things in a Zoo", "Things in a Gym",
-    "Things in an Office", "Things in a Bedroom", "Things in a Garage", "Things in a Suitcase", "Things in a Purse",
-    "Street Names", "Cereal Brands", "Chocolate Bars", "Candy Brands", "Spices",
-    "Condiments", "Sandwich Fillings", "Types of Pasta", "Types of Bread", "Cheeses",
-    "In the Fridge", "Under the Bed", "Scary Things", "Yellow Things", "Liquid Things",
-    "Found in a Library", "Found in a Museum", "Found in a Park", "Airport Items", "Wedding Items",
-    "Baby Items", "Pet Supplies", "Cleaning Products", "Gardening Tools", "Camping Gear",
-    "Musical Genres", "Book Titles", "Magazines", "Newspapers", "Movie Studios",
-    "World Landmarks", "Mountains", "Rivers", "Oceans", "Types of Trees",
-    "Precious Stones", "Constellations", "Zodiac Signs", "Units of Measure", "Currencies",
-    "Languages of the World", "Dictators", "Monsters", "Mythical Creatures", "Aliens",
-    "Robots", "Detectives", "Pirate Related", "Cowboy Related", "Space Travel",
-    "Magic Tricks", "Circus Acts", "Fairground Rides", "Toys", "Souvenirs",
-    "Postage Stamps", "Antiques", "Art Styles", "Dance Styles", "Poets",
-    "Inventors", "Scientists", "Philosophers", "Explorers", "Kings and Queens",
-    "British Words", "Slang Words", "Compound Words", "Palindromes", "Rhyming Words",
-    "Things that are Hot", "Things that are Cold", "Things that are Soft", "Things that are Loud", "Things that Smell",
-    "Fragile Items", "Heavy Items", "Square Things", "Round Things", "Sharp Things",
-    "Sticky Things", "Electric Items", "Battery Operated", "Vintage Items", "Eco-friendly Items",
-    "Luxury Brands", "Budget Brands", "Online Stores", "Department Stores", "Toy Stores",
-    "Hardware Stores", "Pharmacy Items", "Hardware Items", "Automotive Parts", "Bicycle Parts",
-    "Skateboard Brands", "Sneaker Models", "Fashion Designers", "Architects", "Painters",
-    "Composers", "Opera Singers", "Broadway Musicals", "Classical Music", "Jazz Legends",
-    "Rappers", "Pop Stars", "Rock Bands", "Indie Movies", "Action Movies",
-    "Horror Movies", "Sci-Fi Movies", "Romantic Comedies", "Documentaries", "Reality TV",
-    "Cooking Shows", "Game Shows", "News Anchors", "Youtubers", "Podcasts",
-    "E-mail Providers", "Operating Systems", "Programming Languages", "Hardware Components", "Cloud Services",
-    "AI Tools", "Cryptocurrencies", "NFT Projects", "Smart Home Devices", "Wearable Tech"
-  ]
+  // People & Names
+  "Girl Names", "Boy Names", "Famous Singers", "Actors", "Historical Figures", "Famous People",
+  "Cartoon Characters", "Disney Characters", "Superheroes", "Athletes", "Dead celebrities",
+  
+  // Places & Geography
+  "Countries", "Countries in Europe", "US States", "Cities", "Capital Cities", "Country, State, City",
+  "World Landmarks", "Street Names", "Things in a Hospital", "Things in a Gym", "Things in an Office",
+  "Things in a Bedroom", "Things in a Garage", "Things in a Suitcase", "Things in a Purse", "Things at School", "Stores", "Restaurants",
+  "Chains & Franchises", "Vacation destinations", "Colleges/universities", "Places you see in the news","Places where you shouldn’t be naked", "Things found at a bar",
+
+  // Animals & Nature
+  "Animals", "Sea Creatures", "Dog Breeds", "Cats","Wild Animals", "Farm Animals", "Pets",
+  
+  // Food & Drink
+  "Fruits", "Vegetables", "Cheeses", "Pizza Toppings", "Ice Cream Flavors", "Desserts", "Breakfast Foods", "Soft Drinks", 
+  "Food Brands", "Chocolate & Candy Brands",
+  "Sandwich Fillings", "Types of Pasta", "Types of Bread", "Coffee Shops", "Juices", "Alcoholic Drinks", "Foods at an Italian restaurant", "Bakery items",
+  "Things on a diner menu", "Foods you eat raw",
+
+  // Entertainment
+  "Movies", "Documentaries",
+  "TV Shows", "Board & Card Games", "Video Games", "Toys", "Video Game Characters", "Movie Studios", "Streaming Platforms",
+  
+  // Music
+  "Musical Instruments", "Musical Genres",
+  "Rappers", "Pop Stars", "Rock Bands", "Bands", "Songs", "Music Albums",
+  
+  // Sports & Activities
+  "Sports", "Olympic Sports", "Winter Activities", "Summer Activities", "Gym Workouts", "Hobbies", "Sports Teams", "Sports Players",
+  
+  // Fashion & Brands
+  "Clothing Items", "Footwear", "Luxury Brands", "Budget Brands", "Accessories", "Perfume Brands",
+  
+  // Technology
+  "Tech Companies", "Apps on your Phone", "Social Media Platforms", "Websites",
+  "Programming Languages","Wearable Tech", "Smartphones", "Computer Brands", "Streaming Apps",
+  
+  // Home & Office
+  "Furniture", "Kitchen Appliances", "Stationery", "Cleaning Products", "Gardening Tools", "Tools", "Decor Items",
+  "Baby Items", "Pet Supplies", "Antiques", "Fragile Items",
+  "Heavy Items", "Square Things", "Round Things", "Sharp Things", "Sticky Things", "Electric Items", "Battery Operated",
+  "Vintage Items", "Office Supplies", "School Supplies", "Kitchen Utensils", "Things in your junk drawer", "Items in a picnic basket", "Things that have buttons",
+
+  // Words & Language
+  "School Subjects", "Languages", "Math Terms", "Chemical Elements", "British Words",
+  "Slang Words", "Compound Words", "Rhyming Words", "Currencies", "Internet Slang",
+  "Book Titles","Authors", "Five-letter words", "Curse words",
+
+  // Fun & Thematic
+  "Scary Things", "Yellow Things", "Liquid Things", "Things that are Hot", "Things that are Cold", "Things that are Soft",
+  "Things that are Loud", "Things that Smell", "Wedding Items", "Party Items",
+  "Halloween Items", "Christmas Items", "Beach Items", "Zoo Items",
+  
+  // Modern Life / Misc
+  "Apps You Use Daily", "Online Stores", "Social Media Terms",
+  "Trending Topics", "Tech Gadgets",
+  "Cars", "Sports Equipment", "Professions that will disappoint your parents", "Professions", "Inappropriate gifts for your grandmother", "Crimes you’d be arrested for", "Dumb ways to get hurt",
+  "Things you shouldn’t bring into the bathtub", "Things that will get you fired",
+  
+  // Odd / Misc Objects
+  "Found in a Library", "Found in a Museum", "Found in a Park", "Airport Items",
+  "Cleaning Products"
+];
