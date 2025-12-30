@@ -1011,7 +1011,11 @@ button {
 }
 
 /* Staggered delay for each letter button */
-.letter-btn:nth-child(n) { animation-delay: calc(0.02s * n); }
+.letter-btn:nth-child(1) { animation-delay: 0.02s; }
+.letter-btn:nth-child(2) { animation-delay: 0.04s; }
+.letter-btn:nth-child(3) { animation-delay: 0.06s; }
+.letter-btn:nth-child(4) { animation-delay: 0.08s; }
+.letter-btn:nth-child(5) { animation-delay: 0.10s; }
 
 @keyframes popIn {
   from { opacity: 0; transform: scale(0.8); }
