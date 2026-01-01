@@ -45,7 +45,7 @@ export let categories = [
   // Words & Language
   "School Subjects", "Languages", "Math Terms", "Chemical Elements", "British Words",
   "Slang Words", "Compound Words", "Rhyming Words", "Currencies", "Internet Slang",
-  "Book Titles","Authors", "Five-letter words", "Curse words",
+  "Book Titles","Authors", "Five-letter words", "Curse words", "Funny Words", "Onomatopoeia", "Fancy Words",
 
   // Fun & Thematic
   "Scary Things", "Yellow Things", "Liquid Things", "Things that are Hot", "Things that are Cold", "Things that are Soft",

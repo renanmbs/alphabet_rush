@@ -1346,3 +1346,30 @@ button {
 }
 
 .series-score { font-weight: 900; color: var(--accent); }
+
+/* For screens smaller than 768px */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 2.5rem;   /* Adjusted size for mobile */
+    letter-spacing: 4px; /* Reducing spacing often helps on small screens too */
+  }
+
+  .name-num {
+  width: 35px;
+  }
+
+  .rules-card {
+  max-width: 900px !important; 
+  padding: 0.8rem 1rem !important;
+  overflow-y: auto !important;
+}
+
+.series-banner {
+  margin-top: -5px; /* Move it closer to the top bar */
+}
+
+.app {
+  margin: 0rem auto 8rem auto;
+}
+
+}
