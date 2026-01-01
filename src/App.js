@@ -476,7 +476,7 @@ function RulesModal({ onClose, mode }) {
           </div>
         </div>
 
-        <button className="primary-btn finish-btn" onClick={onClose}>Ready to Rush</button>
+        <button className="primary-btn finish-btn change" onClick={onClose}>Ready to Rush</button>
       </div>
     </div>
   );

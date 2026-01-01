@@ -1329,8 +1329,6 @@ button {
     text-align: center;
   }
 
- .name-num { width: 45px; height: 45px; }
-
   .rules-card {
   max-width: 900px !important; 
   padding: 0.8rem 1rem !important;
@@ -1387,5 +1385,48 @@ body {
 
 .timer-display {width: 100px; height: 100px; }
 
+
+.time-val {
+  font-size: 2rem; /* Slightly smaller to fit "SKIPPING" */
+}
+
+.rules-list {
+  line-height: 1.2;
+}
+
+.shortcut-grid {
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+kbd {
+  background: #eee;
+  border-radius: 5px;
+  border: 1px solid #b4b4b4;
+  box-shadow: 0 2px 0 #b4b4b4;
+  color: #333;
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: 700;
+  padding: 2px 6px;
+  white-space: nowrap;
+  margin: 5px 0
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 0.6rem 0;
+}
 
 }
