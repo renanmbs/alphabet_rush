@@ -1371,7 +1371,7 @@ body {
   margin-bottom: 5px;
 }
 
-.name-num { width: 40px; height: 38px; }
+.name-num { width: 40px; height: 40px; }
 
 .player-name-big {
   font-size: 1.5rem;
@@ -1454,6 +1454,7 @@ height: 20px;
   padding: 8px 0px !important;
   gap: 6px;
   text-align: center !important;
+  justify-content: center !important;
 }
 
 .next-letter-pill .label {
