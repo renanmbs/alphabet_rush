@@ -1451,7 +1451,7 @@ height: 20px;
 
 .next-letter-pill {
   margin-top: 10px;
-  padding: 6px 0px !important;
+  padding: 0px 0px !important;
   gap: 6px;
   text-align: center !important;
   justify-content: center !important;
