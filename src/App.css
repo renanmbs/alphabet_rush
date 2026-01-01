@@ -1356,7 +1356,8 @@ button {
   }
 
   .name-num {
-  width: 50px;
+  width: 50px !important;
+  border: solid red !important;
   }
 
   .rules-card {
@@ -1369,8 +1370,43 @@ button {
   margin-top: -5px; /* Move it closer to the top bar */
 }
 
-.app {
-  padding: 0rem auto 8rem auto;
+body {
+  border: solid red;
+  margin: 0rem 0 4rem 0;
+  color: white;
 }
+
+.cat-pill {
+  padding: 14px 20px;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, var(--accent), var(--accent-dark));
+  box-shadow:
+    0 2px 2px color-mix(in oklab, var(--accent) 35%, transparent);
+    text-align: center;
+}
+
+.cat-pill .label {
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  opacity: 0.8;
+}
+
+.cat-pill .text {
+  font-size: 1.4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.series-banner {
+  margin-bottom: 5px;
+}
+
+.player-name-big {
+  font-size: 1.5rem;
+  text-shadow: 0 0 5px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+
 
 }
