@@ -1450,8 +1450,12 @@ height: 20px;
 
 .next-letter-pill {
   margin-top: 10px;
-  padding: 8px 10px;
+  padding: 8px 6px;
   gap: 8px;
+}
+
+.rules-box h3, .rules-box h4{
+  margin: 4px auto !important;
 }
 
 }
