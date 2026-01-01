@@ -1244,7 +1244,6 @@ button {
   gap: 10px;
   margin-bottom: 20px;
 }
-
 .badge-pill {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--accent);
