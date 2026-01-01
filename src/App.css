@@ -1352,10 +1352,11 @@ button {
   .logo {
     font-size: 2.5rem;   /* Adjusted size for mobile */
     letter-spacing: 4px; /* Reducing spacing often helps on small screens too */
+    text-align: center;
   }
 
   .name-num {
-  width: 35px;
+  width: 50px;
   }
 
   .rules-card {
@@ -1369,7 +1370,7 @@ button {
 }
 
 .app {
-  margin: 0rem auto 8rem auto;
+  padding: 0rem auto 8rem auto;
 }
 
 }
