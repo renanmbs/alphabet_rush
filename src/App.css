@@ -611,19 +611,6 @@ kbd {
   transform: scale(0.95);
 }
 
-.name-num {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #020617;
-  border: 1px solid var(--glass-border);
-  display: grid;
-  place-items: center;
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: #94a3b8;
-}
-
 .name-input-wrapper input {
   flex: 1;
   padding: 14px 16px;
@@ -696,19 +683,6 @@ button {
 }
 
 /* Enhancing the Player Number circles */
-.name-num {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px; /* Slightly squircle */
-  background: var(--panel);
-  border: 1px solid var(--glass-border);
-  display: grid;
-  place-items: center;
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--accent);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
 
 /* Control Buttons (Pause/Skip) */
 .control-btn {
@@ -1355,10 +1329,7 @@ button {
     text-align: center;
   }
 
-  .name-num {
-  width: 50px !important;
-  border: solid red !important;
-  }
+ .name-num { width: 45px; height: 45px; }
 
   .rules-card {
   max-width: 900px !important; 
@@ -1371,13 +1342,13 @@ button {
 }
 
 body {
-  border: solid red;
-  margin: 0rem 0 4rem 0;
-  color: white;
+  min-height: 120vh;
+  margin: 0rem 0 2rem 0;
 }
 
+
 .cat-pill {
-  padding: 14px 20px;
+  padding: 10px 20px;
   border-radius: 999px;
   background:
     linear-gradient(135deg, var(--accent), var(--accent-dark));
@@ -1407,6 +1378,14 @@ body {
   font-size: 1.5rem;
   text-shadow: 0 0 5px color-mix(in oklab, var(--accent) 30%, transparent);
 }
+
+.start-btn {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  padding: 5px 18px;
+}
+
+.timer-display {width: 100px; height: 100px; }
 
 
 }
