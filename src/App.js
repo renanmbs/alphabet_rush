@@ -192,48 +192,48 @@ export default function App() {
     return () => clearInterval(timerRef.current);
   }, [active, gameStarted, isPaused, isCounting, turnStart, eliminated, players, handleTimeout]);
 
-useEffect(() => {
-  const onKey = (e) => {
-    if (showRules || e.target.tagName === "INPUT" || !active) return;
-    const key = e.key.toUpperCase();
+  useEffect(() => {
+    const onKey = (e) => {
+      if (showRules || e.target.tagName === "INPUT" || !active) return;
+      const key = e.key.toUpperCase();
 
-    // 1. Spacebar (Classic - pause / Auto - done)
-    // We keep this here because togglePause handles its own state
-    if (e.code === "Space") {
-      e.preventDefault();
-      if (!gameStarted) return;
-      mode === "random" ? handleTurn(currentLetter) : togglePause();
-      return;
-    }
-
-    // 2. Enter Key (Random - pause / Classic - skip)
-    // MOVED ABOVE the isPaused check so it can unpause!
-    if (e.code === "Enter") {
-      e.preventDefault();
-      if (!gameStarted) return;
-
-      if (mode === "random") {
-        togglePause(); // This will now work to BOTH pause and unpause
-      } else {
-        if (!isPaused) handleSkip(); // Only skip if not paused
+      // 1. Spacebar (Classic - pause / Auto - done)
+      // We keep this here because togglePause handles its own state
+      if (e.code === "Space") {
+        e.preventDefault();
+        if (!gameStarted) return;
+        mode === "random" ? handleTurn(currentLetter) : togglePause();
+        return;
       }
-      return;
-    }
 
-    // --- Safety Gate ---
-    // Anything below this requires the game to be unpaused
-    if (!gameStarted || isPaused) return;
+      // 2. Enter Key (Random - pause / Classic - skip)
+      // MOVED ABOVE the isPaused check so it can unpause!
+      if (e.code === "Enter") {
+        e.preventDefault();
+        if (!gameStarted) return;
 
-    // 3. Skip (S key)
-    if (key === "S" && mode === "random") handleSkip();
+        if (mode === "random") {
+          togglePause(); // This will now work to BOTH pause and unpause
+        } else {
+          if (!isPaused) handleSkip(); // Only skip if not paused
+        }
+        return;
+      }
 
-    // 4. Submit alphabet (Classic Mode)
-    if (mode === "choose" && ALPHABET.includes(key)) handleTurn(key);
-  };
+      // --- Safety Gate ---
+      // Anything below this requires the game to be unpaused
+      if (!gameStarted || isPaused) return;
 
-  window.addEventListener("keydown", onKey);
-  return () => window.removeEventListener("keydown", onKey);
-}, [gameStarted, isPaused, active, mode, currentLetter, usedLetters, pausedAt, turnStart, showRules, handleSkip, handleTurn, togglePause]);
+      // 3. Skip (S key)
+      if (key === "S" && mode === "random") handleSkip();
+
+      // 4. Submit alphabet (Classic Mode)
+      if (mode === "choose" && ALPHABET.includes(key)) handleTurn(key);
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [gameStarted, isPaused, active, mode, currentLetter, usedLetters, pausedAt, turnStart, showRules, handleSkip, handleTurn, togglePause]);
 
   // ───────────────── COUNTDOWN EFFECT ─────────────────
   useEffect(() => {
@@ -293,34 +293,34 @@ useEffect(() => {
       </div>
 
       <div className="category-section" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-  {/* Updated Hero Section */}
-  <div className="active-player-hero">
-    <div className="hero-row">
-      <h2 className="player-name-big">{players[currentPlayer]}</h2>
-      <span className="skip-badge">
-        {skipsLeft[players[currentPlayer]] > 0 ? "✨ Skip Available" : "❌ Skip Used"}
-      </span>
-    </div>
-  </div>
+        {/* Updated Hero Section */}
+        <div className="active-player-hero">
+          <div className="hero-row">
+            <h2 className="player-name-big">{players[currentPlayer]}</h2>
+            <span className="skip-badge">
+              {skipsLeft[players[currentPlayer]] > 0 ? "✨ Skip Available" : "❌ Skip Used"}
+            </span>
+          </div>
+        </div>
 
-  <div className="cat-pill">
-    <span className="label">CATEGORY</span>
-    <div className="text">{category}</div>
+        <div className="cat-pill">
+          <span className="label">CATEGORY</span>
+          <div className="text">{category}</div>
 
-    {mode === "random" && gameStarted && (
-      <div className="next-letter-pill">
-        <span className="label">YOUR LETTER:</span>
-        <span className="val">{currentLetter}</span>
+          {mode === "random" && gameStarted && (
+            <div className="next-letter-pill">
+              <span className="label">YOUR LETTER:</span>
+              <span className="val">{currentLetter}</span>
+            </div>
+          )}
+        </div>
+
+        {!gameStarted && active && !isCounting && (
+          <button className="cat-skip-btn" onClick={handleCategorySkip} disabled={!catSkipAvailable}>
+            {catSkipAvailable ? "↺ Skip Category" : "No skips left"}
+          </button>
+        )}
       </div>
-    )}
-  </div>
-
-  {!gameStarted && active && !isCounting && (
-    <button className="cat-skip-btn" onClick={handleCategorySkip} disabled={!catSkipAvailable}>
-      {catSkipAvailable ? "↺ Skip Category" : "No skips left"}
-    </button>
-  )}
-</div>
 
       <div className={`timer-display ${panic ? "panic" : ""}`}>
         {isCounting && <div className="countdown-overlay"><div className="countdown-text">{countdown}</div></div>}
@@ -370,7 +370,26 @@ useEffect(() => {
               </>
             )}
             <div className="end-actions">
-              {!allCleared && <button className="primary-btn" onClick={() => { setActive(true); setGameStarted(false); setTimeLeft(ROUND_TIME); setTurnStart(null); }}>Continue Round</button>}
+              {!allCleared && (
+                <button
+                  className="primary-btn"
+                  onClick={() => {
+                    // Move to the next non-eliminated player BEFORE resuming
+                    let idx = currentPlayer;
+                    do {
+                      idx = (idx + 1) % players.length;
+                    } while (eliminated.includes(players[idx]));
+
+                    setCurrentPlayer(idx);
+                    setActive(true);
+                    setGameStarted(false);
+                    setTimeLeft(ROUND_TIME);
+                    setTurnStart(null);
+                  }}
+                >
+                  Continue Round
+                </button>
+              )}
               <button className="secondary-btn" onClick={() => startRound(players, false)}>
                 Next Round
               </button>
